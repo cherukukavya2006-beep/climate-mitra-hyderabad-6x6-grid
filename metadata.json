@@ -1,0 +1,11 @@
+{
+  "name": "Climate Mitra & Hyderabad 6×6 Grid",
+  "description": "AI-powered weather, climate and agriculture intelligence combined with a hyperlocal 6×6 geographic weather grid module for Hyderabad.",
+  "requestFramePermissions": [
+    "microphone",
+    "geolocation"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
