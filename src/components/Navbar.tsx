@@ -1,7 +1,15 @@
 import React from 'react';
 import { CloudSun, Grid3X3, Sprout, BotMessageSquare, PhoneCall } from 'lucide-react';
 
-export default function Navbar({ activeTab, setActiveTab }: { activeTab: string, setActiveTab: (tab: string) => void }) {
+export default function Navbar({
+  activeTab,
+  setActiveTab,
+  onCallAI,
+}: {
+  activeTab: string;
+  setActiveTab: (tab: string) => void;
+  onCallAI: () => void;
+}) {
   const tabs = [
     { id: 'home', label: 'Home', icon: null },
     { id: 'weather', label: 'Weather', icon: <CloudSun size={18} /> },
@@ -14,7 +22,7 @@ export default function Navbar({ activeTab, setActiveTab }: { activeTab: string,
     <nav className="fixed top-0 w-full z-50 glass-card border-b border-brand-border/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          <div 
+          <div
             className="flex items-center space-x-2 cursor-pointer"
             onClick={() => setActiveTab('home')}
           >
@@ -30,8 +38,8 @@ export default function Navbar({ activeTab, setActiveTab }: { activeTab: string,
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
                 className={`flex items-center space-x-1 px-4 py-2 rounded-full font-medium smooth-transition ${
-                  activeTab === tab.id 
-                    ? 'bg-brand-primary/10 text-brand-primary' 
+                  activeTab === tab.id
+                    ? 'bg-brand-primary/10 text-brand-primary'
                     : 'text-brand-dark/70 hover:bg-brand-primary/5 hover:text-brand-dark'
                 }`}
               >
@@ -43,17 +51,17 @@ export default function Navbar({ activeTab, setActiveTab }: { activeTab: string,
           </div>
 
           <div className="flex items-center">
-            <a 
-              href="tel:+918000000000" 
+            <button
+              onClick={onCallAI}
               className="flex items-center space-x-2 px-5 py-2.5 bg-brand-accent text-brand-dark rounded-full font-bold shadow-sm hover:shadow-md hover:-translate-y-0.5 smooth-transition"
             >
               <PhoneCall size={18} />
               <span className="hidden sm:inline">Call AI</span>
-            </a>
+            </button>
           </div>
         </div>
       </div>
-      
+
       {/* Mobile nav indicator */}
       <div className="md:hidden flex overflow-x-auto py-2 px-4 space-x-2 border-t border-brand-border/30 bg-white">
         {tabs.map(tab => (
@@ -61,8 +69,8 @@ export default function Navbar({ activeTab, setActiveTab }: { activeTab: string,
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex-shrink-0 flex items-center space-x-1 px-3 py-1.5 rounded-full text-sm font-medium smooth-transition ${
-              activeTab === tab.id 
-                ? 'bg-brand-primary/10 text-brand-primary' 
+              activeTab === tab.id
+                ? 'bg-brand-primary/10 text-brand-primary'
                 : 'text-brand-dark/70 hover:bg-brand-primary/5'
             }`}
           >

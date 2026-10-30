@@ -33,10 +33,27 @@ export default function AIAssistant() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ question: userMsg })
       });
-      const data = await res.json();
-      setMessages(prev => [...prev, { role: 'bot', content: data.answer }]);
-    } catch (err) {
-      setMessages(prev => [...prev, { role: 'bot', content: 'Network error. Please try again later.' }]);
+
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        const errorMsg = data?.error || data?.answer || `Server error (${res.status}). Please try again.`;
+        setMessages(prev => [...prev, { role: 'bot', content: errorMsg }]);
+        return;
+      }
+
+      if (data && data.answer) {
+        setMessages(prev => [...prev, { role: 'bot', content: data.answer }]);
+      } else {
+        setMessages(prev => [...prev, { role: 'bot', content: 'No answer received from Climate Mitra brain. Please try again.' }]);
+      }
+    } catch (err: any) {
+      console.error('AI Assistant fetch error:', err);
+      const isConnectionError = err?.name === 'TypeError' || err?.message?.toLowerCase().includes('fetch');
+      const safeMessage = isConnectionError
+        ? 'Could not connect to the Climate Mitra backend server. Please verify that the server is running on http://localhost:3000.'
+        : `Network error: ${err?.message || 'Unable to complete request'}. Please try again later.`;
+      setMessages(prev => [...prev, { role: 'bot', content: safeMessage }]);
     } finally {
       setLoading(false);
     }
@@ -60,11 +77,10 @@ export default function AIAssistant() {
                 <div className={`w-8 h-8 shrink-0 rounded-full flex items-center justify-center ${msg.role === 'user' ? 'bg-brand-secondary/20 text-brand-secondary' : 'bg-brand-primary/20 text-brand-primary'}`}>
                   {msg.role === 'user' ? <User size={16} /> : <Bot size={16} />}
                 </div>
-                <div className={`p-4 rounded-2xl ${
-                  msg.role === 'user' 
-                    ? 'bg-brand-secondary text-white rounded-tr-none' 
+                <div className={`p-4 rounded-2xl ${msg.role === 'user'
+                    ? 'bg-brand-secondary text-white rounded-tr-none'
                     : 'bg-white border border-brand-border shadow-sm text-brand-dark rounded-tl-none'
-                }`}>
+                  }`}>
                   <p className="whitespace-pre-wrap text-sm sm:text-base leading-relaxed">{msg.content}</p>
                 </div>
               </div>
@@ -95,7 +111,7 @@ export default function AIAssistant() {
               placeholder="Type your question here (e.g., 'Will it rain tomorrow?')"
               className="w-full bg-brand-light border border-brand-border rounded-full py-4 pl-6 pr-14 text-brand-dark focus:outline-none focus:ring-2 focus:ring-brand-primary/50 smooth-transition"
             />
-            <button 
+            <button
               type="submit"
               disabled={loading || !input.trim()}
               className="absolute right-2 p-3 bg-brand-primary text-white rounded-full hover:bg-brand-primary/90 disabled:opacity-50 disabled:hover:bg-brand-primary smooth-transition"
